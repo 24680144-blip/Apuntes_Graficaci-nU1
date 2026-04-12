@@ -732,3 +732,129 @@ Cada vez que se modifica la ubicación, se llama a `context.area.tag_redraw()`. 
 ---
 
 
+### 2.3.2 B-Splines: La Ciencia Detrás de los "Bendy Bones"
+
+En graficación, una **B-Spline** (Basis Spline) es una curva definida por trozos de polinomios que garantiza una transición suave y continua. En Blender, esto se implementa mediante los **B-Bones** (Huesos Flexibles), que permiten que un hueso se curve como una marioneta en lugar de ser una barra rígida.
+
+#### A. Conceptos Fundamentales
+* **Puppet Animation:** Es la técnica de animar dibujos planos tratándolos como marionetas articuladas mediante un esqueleto o "rig".
+* **Segmentación Suave:** A diferencia de un hueso común, un B-Bone se divide internamente en múltiples segmentos (por ejemplo, 8 o 16). Cada segmento actúa como un punto de control de una curva spline, permitiendo deformaciones elásticas.
+* **Organización por Capas:** Para que la animación funcione, el dibujo (*stroke*) y su relleno (*fill*) deben estar perfectamente identificados y separados en el panel de capas.
+
+
+---
+
+### B. Guía Práctica: Del Trazo al Movimiento
+
+#### 1. Preparación del Personaje (The Stroke)
+* **Dibujo Organizado**: Se deben crear capas específicas para cada parte móvil (ej. cabeza superior, cabeza inferior, tentáculos). 
+* **Uso de Máscaras**: Para evitar que las líneas de unión se vean feas al moverse, se aplican máscaras de recorte. Esto asegura que solo se vea la parte del dibujo que debe estar visible durante la articulación.
+
+#### 2. Creación del Rigging (El Esqueleto)
+* **Armadura (Armature)**: Se añaden huesos 3D que servirán como estructura interna.
+* **Jerarquía de Huesos**: Se establecen relaciones de "Padre e Hijo". Si mueves el hueso padre (ej. la base), los hijos se mueven con él, pero si mueves un hijo, el padre se queda quieto.
+* **Activación de B-Bones**: En el panel de propiedades, se cambia el tipo de visualización a "B-Bone" y se aumentan los segmentos para que el hueso sea flexible.
+
+#### 3. Vinculación y Animación
+* **Parentesco con Pesos**: Se une el dibujo a los huesos mediante "Automatic Weights". Esto hace que el trazo siga la curvatura matemática del hueso.
+* **Inverse Kinematics (IK)**: Es un mecanismo que permite mover la punta de una extremidad (como el tentáculo de tu medusa) y que el resto de los huesos se acomoden automáticamente para seguir ese movimiento.
+* **Grabación de Movimiento**: Se utiliza el "Auto-Keying" para registrar cada posición en la línea de tiempo, creando una secuencia de animación fluida.
+
+---
+
+> "Lo que ves como un movimiento elástico en pantalla es, en realidad, el motor gráfico recalculando en cada frame una **curva B-Spline** que deforma los puntos de tu dibujo según la posición de los huesos".
+
+**Bibliografía de consulta:**
+* Quiroga, F. (2024). *Huesos o Rigging de personaje en Blender Grease Pencil - Tutorial #7*. [Video de YouTube]. Disponible en: [https://www.youtube.com/watch?v=_OBpZDl44hg](https://www.youtube.com/watch?v=_OBpZDl44hg).
+
+---
+https://www.youtube.com/watch?v=_OBpZDl44hg&list=PL-j_PSayJLelClwTXzu5egUXrO4UCXYdI&index=7
+
+
+<img width="1057" height="815" alt="image" src="https://github.com/user-attachments/assets/08eeefa8-d671-4a6c-8e15-4be5db224ee8" />
+
+---
+
+## 2.4 Fractales
+
+Un **fractal** es un objeto geométrico cuya estructura básica, fragmentada o aparentemente irregular, se repite a diferentes escalas. El término fue acuñado por Benoît Mandelbrot en 1975 y proviene del latín *fractus* (romper o fracturar).
+
+### 2.4.1 Conceptos Clave
+Para que alguien entienda qué es un fractal, debemos explicar dos propiedades fundamentales:
+1.  **Autosimilitud:** Si observas una parte pequeña del fractal, verás una copia (exacta o estadística) del todo.
+2.  **Dimensión Fractal:** A diferencia de las figuras euclidianas (un punto tiene dimensión 0, una línea 1, un plano 2), los fractales tienen dimensiones fraccionarias porque "llenan" el espacio de una manera muy irregular.
+
+
+
+### 2.4.2 Relación con tu código: "La Flor de la Vida"
+Aunque la **Flor de la Vida** (`FlorDeVida.txt`) es técnicamente un patrón de geometría sagrada, su construcción sigue el principio de **iteración recursiva**, que es la base de los fractales:
+
+**El Algoritmo:** El script utiliza un ciclo `while` para repetir una instrucción simple (crear un círculo) mientras cambia un parámetro (el ángulo).
+**Construcción Procedural:** Al igual que un fractal de Koch o un conjunto de Julia, la figura compleja final emerge de la repetición de una regla geométrica simple en diferentes posiciones.
+* **Fragmento de Código Crítico:**
+    ```python
+    while angulo_actual <= 360:
+        angulo_actual += paso_angular
+        x2 = radio * math.cos(math.radians(angulo_actual))
+        y2 = radio * math.sin(math.radians(angulo_actual))
+        bpy.ops.mesh.primitive_circle_add(radius=radio, location = (x2,y2,0), vertices=64)
+    ```
+   Este bucle es una forma de **recursividad iterativa**: cada iteración traslada el "patrón base" (el círculo) a una nueva ubicación para formar una estructura mayor.
+
+---
+
+### 2.4.3 Fractales en el Diseño y Animación
+En Blender y la graficación moderna, los fractales se utilizan para:
+* **Generación de Terrenos:** Usando ruido fractal (como el ruido Perlin o Musgrave) para crear montañas y valles realistas.
+* **Texturas:** Para simular mármol, nubes o fuego.
+* **Estructuras Orgánicas:** Árboles, nubes y sistemas circulatorios siguen patrones fractales para optimizar el espacio.
+
+
+> "Un fractal no se 'dibuja' punto por punto, se **calcula** repitiendo una fórmula. Si aplicáramos fractales a tu personaje de la medusa, podríamos usarlos para generar tentáculos infinitamente ramificados o texturas en su piel que nunca pierden detalle por más que te acerques".
+
+---
+
+Excelente decisión. Vamos a profundizar en el último bloque del temario, el cual es fundamental para la comunicación visual en cualquier entorno de diseño.
+
+---
+
+## 2.5 Uso y creación de fuentes de texto
+
+En la graficación 2D, el texto no es simplemente una imagen estática, sino una colección de formas geométricas complejas. Entender cómo se gestionan estas fuentes es vital para integrar interfaces de usuario (UI) o elementos narrativos en proyectos de Blender.
+
+### 2.5.1 Tipos de Representación de Texto
+
+* **Texto Rasterizado (Mapas de bits)**: El texto se define como una rejilla de píxeles. Al escalarlo, se pierde calidad y aparece el "pixelado".
+* **Texto Vectorial (Outlines)**: Las letras se definen mediante **Curvas de Bézier** y líneas matemáticas. Esto permite que el texto se escale infinitamente sin perder nitidez, que es como Blender maneja internamente los objetos de tipo `Text`.
+
+### 2.5.2 El Objeto "Text" en Blender
+
+1.  **Tipografía (Fonts)**: Permite cargar archivos `.ttf` (TrueType) o `.otf` (OpenType), que contienen las instrucciones matemáticas de cada carácter.
+2.  **Geometrización**: Blender permite "extruir" el texto 2D para darle volumen 3D o convertirlo en una malla de vértices similar a los polígonos que generaste con `crear_poligono_2d`.
+3. **Resolución**: Se puede ajustar la suavidad de las curvas de las letras, lo cual se relaciona directamente con la densidad de vértices que manejaste en `FlorDeVida.txt`.
+
+
+
+### 2.5.3 Integración con Python (API de Blender)
+Para automatizar la creación de texto, se utiliza el módulo `bpy`, similar a cómo generaste el escenario procedimental.
+* **Creación**: `bpy.ops.object.text_add()` genera un objeto de texto en el origen.
+* **Edición de Contenido**: `bpy.context.object.data.body = "Hola Mundo"` cambia el texto dinámicamente.
+* **Posicionamiento**: Se aplican las mismas matrices de traslación y rotación que estudiamos en el bloque 2.1.
+
+---
+
+
+> "El texto en computación gráfica es el uso máximo de las **Curvas de Bézier**. Cada letra que ves es un trazo matemático cerrado que puede ser transformado, escalado y animado igual que la medusa o el pasillo que construiste".
+
+---
+
+## Bibliografía Sugerida (Formato APA)
+
+
+* **Blender Foundation.** (2026). *Blender 4.0 Python API Documentation*. Recuperado de [https://docs.blender.org/api/current/](https://docs.blender.org/api/current/).
+* **Hearn, D., & Baker, M. P.** (2014). *Computer Graphics with OpenGL* (4ta ed.). Pearson Education. (Referencia base para Transformaciones 2D y Matrices) 
+* **Quiroga, F.** [Fernando Quiroga Art]. (2024, 31 de julio). *Huesos o Rigging de personaje en Blender Grease Pencil - Tutorial #7* . YouTube. [https://www.youtube.com/watch?v=_OBpZDl44hg](https://www.youtube.com/watch?v=_OBpZDl44hg)
+* **Wright, R. S., Haemel, N., Sellers, G., & Lipchak, B.** (2010). *OpenGL SuperBible: Comprehensive Tutorial and Reference*. Addison-Wesley Professional. (Referencia para trazo de líneas y curvas) 
+---
+
+
