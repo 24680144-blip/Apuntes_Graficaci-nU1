@@ -630,7 +630,7 @@ La traslación es la operación más sencilla y consiste en desplazar un objeto 
 * **Ecuación:**
     $$x' = x + t_x$$
     $$y' = y + t_y$$
-* **Aplicación en tus archivos:** En el script `FlorDeVida.txt`, la traslación es dinámica. [cite_start]Calculas la ubicación de cada nuevo círculo usando el radio y el ángulo actual: `location = (x1, y1, 0)`[cite: 15]. [cite_start]Esto desplaza el centro de cada círculo desde el origen $(0,0,0)$ hacia su posición en el patrón geométrico[cite: 15].
+* **Aplicación en tus archivos:** En el script `FlorDeVida.txt`, la traslación es dinámica. Calculas la ubicación de cada nuevo círculo usando el radio y el ángulo actual: `location = (x1, y1, 0)`. Esto desplaza el centro de cada círculo desde el origen $(0,0,0)$ hacia su posición en el patrón geométrico.
 
 
 
@@ -643,7 +643,7 @@ El escalamiento cambia el tamaño de un objeto. Puede ser **uniforme** (si el ob
 * **Ecuación:**
     $$x' = x \cdot s_x$$
     $$y' = y \cdot s_y$$
-* [cite_start]**Aplicación en tus archivos:** En `escenarioProcedural.txt`, utilizas el escalamiento para dar variedad visual a las paredes[cite: 5, 6]. [cite_start]El código asigna un valor de `esc_z = 1.5` a los bloques impares y `esc_z = 1.0` a los pares[cite: 5, 6]. [cite_start]Al ejecutar `p.scale = (grosor_pared, fill_y / 2 + 0.1, esc_z)`, estás aplicando un escalamiento no uniforme que altera el ancho, largo y alto del cubo de forma independiente[cite: 6, 7].
+* **Aplicación en tus archivos:** En `escenarioProcedural.txt`, utilizas el escalamiento para dar variedad visual a las paredes. El código asigna un valor de `esc_z = 1.5` a los bloques impares y `esc_z = 1.0` a los pares. Al ejecutar `p.scale = (grosor_pared, fill_y / 2 + 0.1, esc_z)`, estás aplicando un escalamiento no uniforme que altera el ancho, largo y alto del cubo de forma independiente.
 
 
 
@@ -656,7 +656,7 @@ La rotación gira los puntos de un objeto alrededor de un punto fijo, típicamen
 * **Ecuación:**
     $$x' = x \cos(\theta) - y \sin(\theta)$$
     $$y' = y \cos(\theta) + x \sin(\theta)$$
-* **Aplicación en tus archivos:** Es el núcleo del script `escenarioProcedural.txt`. [cite_start]Para que el pasillo parezca curvo, cada bloque de pared debe rotar para alinearse con la dirección de la curva[cite: 4, 5]. [cite_start]Calculas esta rotación con la función `angulo_tangente(i)` y la aplicas directamente a la propiedad de rotación de Blender: `p.rotation_euler.z = rot`[cite: 4, 6].
+* **Aplicación en tus archivos:** Es el núcleo del script `escenarioProcedural.txt`. Para que el pasillo parezca curvo, cada bloque de pared debe rotar para alinearse con la dirección de la curva. Calculas esta rotación con la función `angulo_tangente(i)` y la aplicas directamente a la propiedad de rotación de Blender: `p.rotation_euler.z = rot`[cite: 4, 6].
 
 
 
@@ -669,9 +669,66 @@ El sesgado o cizallamiento inclina el objeto a lo largo de un eje, deformando su
 * **Ecuación (Sesgado en X):**
     $$x' = x + sh_x \cdot y$$
     $$y' = y$$
-* **Análisis Técnico:** En tus scripts, el sesgado no se aplica mediante una función directa de "shear", pero se compensa matemáticamente en el cálculo de `fill_y`. [cite_start]Al usar `fill_y = paso / max(math.cos(rot), 0.5)`, estás ajustando la escala en un eje para compensar el "hueco" que dejaría la rotación pura en las uniones de los bloques[cite: 5]. [cite_start]Este ajuste de proporciones basado en un ángulo es conceptualmente cercano a cómo el sesgado afecta la geometría para mantener la continuidad visual[cite: 5].
+* **Análisis Técnico:** En tus scripts, el sesgado no se aplica mediante una función directa de "shear", pero se compensa matemáticamente en el cálculo de `fill_y`. Al usar `fill_y = paso / max(math.cos(rot), 0.5)`, estás ajustando la escala en un eje para compensar el "hueco" que dejaría la rotación pura en las uniones de los bloques. Este ajuste de proporciones basado en un ángulo es conceptualmente cercano a cómo el sesgado afecta la geometría para mantener la continuidad visual.
 
 
 
 ---
+
+## 2.2 Representación Matricial de las Transformaciones Bidimensionales
+
+En la graficación por computadora, no realizamos las transformaciones (traslación, rotación, escala) como operaciones aisladas. En su lugar, utilizamos **Matrices de Transformación**. Esto permite "concatenar" múltiples movimientos (por ejemplo, rotar y luego trasladar) en una sola operación matemática multiplicando matrices.
+
+### 2.2.1 Coordenadas Homogéneas
+Para que la **Traslación** (que es una suma) pueda tratarse como una multiplicación (igual que la rotación y escala), añadimos una tercera dimensión artificial llamada $w$. Así, un punto $(x, y)$ se convierte en $(x, y, 1)$.
+
+
+### 2.2.2 Matrices Básicas
+Cada transformación tiene su propia matriz de $3 \times 3$:
+<img width="658" height="541" alt="image" src="https://github.com/user-attachments/assets/9f93efa5-53c6-4584-ba02-93d546745a0a" />
+
+---
+
+## Ejercicio Práctico: Control por Teclado (Interacción en Tiempo Real)
+
+El código `MoveD.text` que proporcionas es un ejemplo perfecto de cómo se aplican estas transformaciones de forma interactiva en Blender. Aquí, el usuario actúa como el "motor de transformación" enviando señales a través del teclado.
+
+### Análisis del Código `CupheadMover`
+Este script utiliza un operador **Modal**, lo que significa que Blender "escucha" constantemente los eventos del usuario mientras el script está activo.
+
+#### 1. Captura de Eventos y Traslación Discreta
+Cuando presionas una tecla, el script suma o resta un valor constante a la ubicación del objeto, lo cual es la implementación directa de la **Traslación** ($x' = x + t_x$).
+
+* **Flecha Izquierda (`LEFT_ARROW`)**: Aplica $t_x = -0.5$.
+* **Flecha Derecha (`RIGHT_ARROW`)**: Aplica $t_x = 0.5$.
+* **Flecha Arriba (`UP_ARROW`)**: Aplica $t_z = 0.5$ (Traslación en el eje vertical de Blender).
+* **Flecha Abajo (`DOWN_ARROW`)**: Aplica $t_z = -0.5$.
+
+#### 2. Actualización de la Vista (Tag Redraw)
+Cada vez que se modifica la ubicación, se llama a `context.area.tag_redraw()`. Esto fuerza a Blender a redibujar la escena aplicando la nueva matriz de transformación del objeto en la pantalla.
+
+---
+
+
+```markdown
+##  Control de Usuario: Mover Objeto (Cuphead)
+
+
+### Controles
+| Tecla | Acción | Transformación Matemática |
+|-------|--------|---------------------------|
+| `Flecha Izquierda` | Mover a la Izquierda | $x = x - 0.5$ |
+| `Flecha Derecha` | Mover a la Derecha | $x = x + 0.5$ |
+| `Flecha Arriba` | Subir Objeto | $z = z + 0.5$ |
+| `Flecha Abajo` | Bajar Objeto | $z = z - 0.5$ |
+| `ESC` / `Click Der.` | Finalizar Control | N/A |
+
+### Instalación en Blender
+1. Abre la pestaña de **Scripting**.
+2. Asegúrate de tener un objeto llamado exactamente `Cuphead` en tu escena.
+3. Ejecuta el script. El modo interactivo se activará automáticamente.
+```
+
+---
+
 
