@@ -1,0 +1,55 @@
+import bpy
+
+class CupheadMover(bpy.types.Operator):
+    bl_idname = "object.cuphead_mover"
+    bl_label = "Mover Cuphead Modal"
+
+    def modal(self, context, event):
+        obj = bpy.data.objects.get("Cuphead")
+        
+        # Si el ratón sale de la vista 3D, el script sigue vivo pero espera
+        if event.type in {'ESC', 'RIGHTMOUSE'}:
+            context.workspace.status_text_set(None) # Limpia el mensaje
+            self.report({'INFO'}, "Control finalizado.")
+            return {'FINISHED'}
+
+        if event.value == 'PRESS':
+            # Movimiento con flechas
+            if event.type == 'LEFT_ARROW':
+                obj.location.x -= 0.5
+                context.area.tag_redraw()
+                return {'RUNNING_MODAL'}
+            elif event.type == 'RIGHT_ARROW':
+                obj.location.x += 0.5
+                context.area.tag_redraw()
+                return {'RUNNING_MODAL'}
+            elif event.type == 'UP_ARROW':
+                obj.location.z += 0.5
+                context.area.tag_redraw()
+                return {'RUNNING_MODAL'}
+            elif event.type == 'DOWN_ARROW':
+                obj.location.z -= 0.5
+                context.area.tag_redraw()
+                return {'RUNNING_MODAL'}
+
+        # Mantiene el script activo sin cerrarse
+        return {'PASS_THROUGH'}
+
+    def invoke(self, context, event):
+        if "Cuphead" not in bpy.data.objects:
+            self.report({'ERROR'}, "Objeto 'Cuphead' no encontrado")
+            return {'CANCELLED'}
+        
+        # Mensaje de ayuda en la barra de estado (abajo a la izquierda)
+        context.workspace.status_text_set("MODO CUPHEAD ACTIVO: Usa las flechas. ESC para salir.")
+        
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
+
+# Registro
+if hasattr(bpy.types, "CupheadMover"):
+    bpy.utils.unregister_class(bpy.types.CupheadMover)
+bpy.utils.register_class(CupheadMover)
+
+# Lanzamiento
+bpy.ops.object.cuphead_mover('INVOKE_DEFAULT')
