@@ -615,5 +615,63 @@ Bibliografía (Formato APA)
 
 ---
 
+## Apuntes unidad 2
 
+## 2.1 Transformación Bidimensional
+
+Las transformaciones bidimensionales son operaciones matemáticas que permiten modificar las propiedades espaciales (posición, tamaño, orientación o forma) de un objeto en un plano $XY$. En computación gráfica, estas transformaciones se aplican vértice por vértice para redefinir la geometría de un objeto.
+
+---
+
+### 2.1.1 Traslación
+La traslación es la operación más sencilla y consiste en desplazar un objeto a lo largo de una trayectoria recta desde una posición inicial a una final.
+
+* **Concepto Matemático:** Se añade un vector de desplazamiento $T = (t_x, t_y)$ a las coordenadas originales de cada punto $P = (x, y)$.
+* **Ecuación:**
+    $$x' = x + t_x$$
+    $$y' = y + t_y$$
+* **Aplicación en tus archivos:** En el script `FlorDeVida.txt`, la traslación es dinámica. [cite_start]Calculas la ubicación de cada nuevo círculo usando el radio y el ángulo actual: `location = (x1, y1, 0)`[cite: 15]. [cite_start]Esto desplaza el centro de cada círculo desde el origen $(0,0,0)$ hacia su posición en el patrón geométrico[cite: 15].
+
+
+
+---
+
+### 2.1.2 Escalamiento
+El escalamiento cambia el tamaño de un objeto. Puede ser **uniforme** (si el objeto mantiene sus proporciones) o **no uniforme** (si se estira o aplasta en una dirección más que en otra).
+
+* **Concepto Matemático:** Se multiplican las coordenadas originales por factores de escala $s_x$ y $s_y$.
+* **Ecuación:**
+    $$x' = x \cdot s_x$$
+    $$y' = y \cdot s_y$$
+* [cite_start]**Aplicación en tus archivos:** En `escenarioProcedural.txt`, utilizas el escalamiento para dar variedad visual a las paredes[cite: 5, 6]. [cite_start]El código asigna un valor de `esc_z = 1.5` a los bloques impares y `esc_z = 1.0` a los pares[cite: 5, 6]. [cite_start]Al ejecutar `p.scale = (grosor_pared, fill_y / 2 + 0.1, esc_z)`, estás aplicando un escalamiento no uniforme que altera el ancho, largo y alto del cubo de forma independiente[cite: 6, 7].
+
+
+
+---
+
+### 2.1.3 Rotación
+La rotación gira los puntos de un objeto alrededor de un punto fijo, típicamente el origen.
+
+* **Concepto Matemático:** Requiere el uso de funciones trigonométricas. Para un ángulo $\theta$, el punto gira siguiendo el círculo unitario.
+* **Ecuación:**
+    $$x' = x \cos(\theta) - y \sin(\theta)$$
+    $$y' = y \cos(\theta) + x \sin(\theta)$$
+* **Aplicación en tus archivos:** Es el núcleo del script `escenarioProcedural.txt`. [cite_start]Para que el pasillo parezca curvo, cada bloque de pared debe rotar para alinearse con la dirección de la curva[cite: 4, 5]. [cite_start]Calculas esta rotación con la función `angulo_tangente(i)` y la aplicas directamente a la propiedad de rotación de Blender: `p.rotation_euler.z = rot`[cite: 4, 6].
+
+
+
+---
+
+### 2.1.4 Sesgado (Shear)
+El sesgado o cizallamiento inclina el objeto a lo largo de un eje, deformando sus ángulos internos (un cuadrado se convierte en un paralelogramo).
+
+* **Concepto Matemático:** El desplazamiento de una coordenada depende del valor de la otra coordenada multiplicado por un factor de sesgado ($sh$).
+* **Ecuación (Sesgado en X):**
+    $$x' = x + sh_x \cdot y$$
+    $$y' = y$$
+* **Análisis Técnico:** En tus scripts, el sesgado no se aplica mediante una función directa de "shear", pero se compensa matemáticamente en el cálculo de `fill_y`. [cite_start]Al usar `fill_y = paso / max(math.cos(rot), 0.5)`, estás ajustando la escala en un eje para compensar el "hueco" que dejaría la rotación pura en las uniones de los bloques[cite: 5]. [cite_start]Este ajuste de proporciones basado en un ángulo es conceptualmente cercano a cómo el sesgado afecta la geometría para mantener la continuidad visual[cite: 5].
+
+
+
+---
 
